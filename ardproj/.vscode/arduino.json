@@ -1,0 +1,6 @@
+{
+    "sketch": "ardcar.ino",
+    "board": "arduino:avr:nano",
+    "configuration": "cpu=atmega328old",
+    "port": "/dev/tty.usbserial-14520"
+}
