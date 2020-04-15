@@ -1,41 +1,45 @@
 #include "Arduino.h"
 #include "Servo.h"
 
-#include "bluetooth.h"
-
 // Declare the Servo pin 
 int servoPin = 2; 
 // Create a servo object 
 Servo Servo1; 
 
-const int bled = 7; 		//initializing pin 2 as ‘pwm’ variable
+
+
 
 void setup()
 {
+//    pinMode(motorPin, OUTPUT);
     initBluetooth();
-    sendCommand("AT");
-    sendCommand("AT+ROLE0");
-    sendCommand("AT+UUID0xFFE0");
-    sendCommand("AT+CHAR0xFFE1");
-    sendCommand("AT+NAMEBlueCar");
-    pinMode(bled, OUTPUT);
+    initController();
+    
 //	pinMode(LED_BUILTIN, OUTPUT);
 //    Servo1.attach(servoPin); 
 }
 
+int motorSpeed = 0;
 void loop()
 {
-    readSerial();
-    delay(500);
+    readCommand();
+//    loopServo();
+// updateSerial();
+//    readSerial();
+    /*
+    motorSpeed += 10;
+    if(motorSpeed > 250)
+        motorSpeed = 0;
+    analogWrite(motorPin, motorSpeed);
+    */
     /*
     analogWrite(bled, 250);
     delay(50);
     analogWrite(bled, 0);
     delay(3000);
     */
+   //delay(500);
 }
-
-
 
 void loopServo() {
        // Make servo go to 0 degrees 

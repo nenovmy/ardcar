@@ -2,11 +2,26 @@
 #include "SoftwareSerial.h"
 #include "HardwareSerial.h"
 
-SoftwareSerial mySerial(5, 4); // TX, RX
+SoftwareSerial mySerial(2, 3); // TX, RX
+
+const int blstat = 4;
+
+int buff[10];
+int currCh = 0;
+bool isConnected = false;
+
+long connChecktime = millis();
 
 void initBluetooth() {
-    mySerial.begin(9600);
-    Serial.begin(9600);
+  pinMode(blstat, INPUT);
+  mySerial.begin(9600);
+  Serial.begin(9600);
+
+  sendCommand("AT");
+  sendCommand("AT+ROLE0");
+  sendCommand("AT+UUIDFFE0");
+  sendCommand("AT+CHARFFE1");
+  sendCommand("AT+NAMEBlueCarAdr");
 }
 
 void sendCommand(const char * command) {
@@ -29,6 +44,50 @@ void sendCommand(const char * command) {
   delay(100);
 }
 
+// Used for manual setup
+void updateSerial() {
+  if (mySerial.available())     	
+   Serial.write(mySerial.read()); 
+
+  if (Serial.available())   	
+    mySerial.write(Serial.read());
+}
+
+void checkConnected() {
+  long diff = millis() - connChecktime;
+  if(diff < 300)
+    return;
+  connChecktime = millis();
+
+  bool stat = digitalRead(blstat);
+
+  if(stat) {
+    if(!isConnected) {
+      Serial.println("Device connected");
+    }
+    isConnected = true;
+  }else {
+    if(isConnected) {
+      Serial.println("Device disconnected");
+      shutDown();
+    }
+    isConnected = false;
+  }
+}
+
+void readCommand() {
+  checkConnected();
+
+  while(mySerial.available()) {
+    int nc = mySerial.read();
+    if(nc == 10) {
+      executeCommand(buff);
+      currCh = 0;
+    }else {
+      buff[currCh++] = nc;
+    }
+  }
+}
 
 void readSerial(){
   char reply[50];
@@ -43,4 +102,10 @@ void readSerial(){
     Serial.print(reply);
     Serial.println("We have just read some data");
   }
+}
+
+void writeToBLE(char value) {
+  Serial.print("Writing hex :");
+  Serial.println(value, HEX);
+  mySerial.write(value);
 }

@@ -4,36 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:visibility="visible"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="56dp"
     tools:showIn="@layout/activity_main">
 
-    <TextView
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
 
-    <Button
-        android:id="@+id/turnOnButton"
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#CDDC39"
-        android:text="On"
-        tools:layout_editor_absoluteX="162dp"
-        tools:layout_editor_absoluteY="92dp" />
+        app:barrierDirection="left" />
 
-    <Button
-        android:id="@+id/turnOffButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#D51515"
-        android:text="Off"
-        android:textColor="#FFFFFFFF"
-        tools:layout_editor_absoluteX="161dp"
-        tools:layout_editor_absoluteY="214dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bluetoothDeviceList"
+        android:layout_width="409dp"
+        android:layout_height="673dp"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

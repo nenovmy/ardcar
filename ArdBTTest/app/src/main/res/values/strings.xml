@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Ardcon</string>
+    <string name="title_activity_ardcon">Ardcon</string>
+    <string name="connect">Connect</string>
+    <string name="light">Light</string>
+    <string name="textview">TextView</string>
+    <string name="ble_not_supported">BLE not supported on this device!</string>
+    <string name="connection_lost">Connection lost!</string>
+    <string name="disconnect">Disconnect</string>
+</resources>
