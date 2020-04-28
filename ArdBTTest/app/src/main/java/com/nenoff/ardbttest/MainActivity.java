@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,10 +31,10 @@ public class MainActivity extends AppCompatActivity implements BLEControllerList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        response = (TextView) findViewById(R.id.statusLog);
+        response = findViewById(R.id.statusLog);
         response.setMovementMethod(new ScrollingMovementMethod());
 
-        connectDeviceButton = (Button) findViewById(R.id.connectDevice);
+        connectDeviceButton = findViewById(R.id.connectDevice);
         connectDeviceButton.setEnabled(false);
         connectDeviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements BLEControllerList
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == 42) {
             // Request for camera permission.
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {

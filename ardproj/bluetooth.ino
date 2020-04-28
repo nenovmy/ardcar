@@ -21,7 +21,7 @@ void initBluetooth() {
   sendCommand("AT+ROLE0");
   sendCommand("AT+UUIDFFE0");
   sendCommand("AT+CHARFFE1");
-  sendCommand("AT+NAMEBlueCarAdr");
+  sendCommand("AT+NAMEBlueCarArd");
 }
 
 void sendCommand(const char * command) {
@@ -87,25 +87,4 @@ void readCommand() {
       buff[currCh++] = nc;
     }
   }
-}
-
-void readSerial(){
-  char reply[50];
-  int i = 0;
-  while (mySerial.available()) {
-    reply[i] = mySerial.read();
-    i += 1;
-  }
-  //end the string
-  reply[i] = '\0';
-  if(strlen(reply) > 0){
-    Serial.print(reply);
-    Serial.println("We have just read some data");
-  }
-}
-
-void writeToBLE(char value) {
-  Serial.print("Writing hex :");
-  Serial.println(value, HEX);
-  mySerial.write(value);
 }

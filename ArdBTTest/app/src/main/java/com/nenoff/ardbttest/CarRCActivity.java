@@ -1,19 +1,15 @@
 package com.nenoff.ardbttest;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 public class CarRCActivity extends AppCompatActivity implements BLEControllerListener {
-    private Button ledButton;
-    private Button disconnectButton;
     private TextView statusLog;
 
     private StringBuilder sb = new StringBuilder();
@@ -31,20 +27,17 @@ public class CarRCActivity extends AppCompatActivity implements BLEControllerLis
         setContentView(R.layout.activity_car_r_c);
         this.bleController = BLEController.getInstance();
         this.carController = new CarController((this.bleController));
-        CarSteeringView csv = (CarSteeringView)findViewById(R.id.carSteering);
+        CarSteeringView csv = findViewById(R.id.carSteering);
         csv.setCarController(this.carController);
         initUI();
     }
 
     private void initUI() {
-        statusLog = (TextView) findViewById(R.id.statusLog);
+        statusLog = findViewById(R.id.statusLog);
         statusLog.setMovementMethod(new ScrollingMovementMethod());
 
-        ledButton = (Button) findViewById(R.id.ledButton);
-        ledButton.setOnClickListener(createLEDSwitchOnClickListener());
-
-        this.disconnectButton = (Button) findViewById(R.id.disconnectButton);
-        this.disconnectButton.setOnClickListener(createDisconnectOnClickListener());
+        findViewById(R.id.ledButton).setOnClickListener(createLEDSwitchOnClickListener());
+        findViewById(R.id.disconnectButton).setOnClickListener(createDisconnectOnClickListener());
     }
 
     private View.OnClickListener createLEDSwitchOnClickListener() {

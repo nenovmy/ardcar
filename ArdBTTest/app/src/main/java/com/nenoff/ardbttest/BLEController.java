@@ -81,7 +81,7 @@ public class BLEController{
         public void onBatchScanResults(List<ScanResult> results) {
             for(ScanResult sr : results) {
                 BluetoothDevice device = sr.getDevice();
-                if(isThisTheDevice(device)) {
+                if(!devices.containsKey(device.getAddress()) && isThisTheDevice(device)) {
                     Log.i("[BLE]", "device found " + device.getName() + " with address: " + device.getAddress());
                     deviceFound(device);
                 }

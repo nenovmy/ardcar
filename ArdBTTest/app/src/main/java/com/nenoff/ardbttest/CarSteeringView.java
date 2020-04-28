@@ -1,32 +1,21 @@
 package com.nenoff.ardbttest;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 /**
  * TODO: document your custom view class.
  */
 public class CarSteeringView extends View {
-    private final static float MIN_POW = 0.1f; // min power (e.g 0.5V from 5V input)
-
-    private String mExampleString; // TODO: use a default from R.string...
-    private int mExampleColor = Color.RED; // TODO: use a default from R.color...
-    private float mExampleDimension = 0; // TODO: use a default from R.dimen...
-    private Drawable mExampleDrawable;
-
-    private TextPaint mTextPaint;
-    private float mTextWidth;
-    private float mTextHeight;
+    private final static float MIN_POW = 0.20f; // min power (e.g 0.5V from 5V input)
+    private final static float MOTOR_BOOST = 1.2f; // boost factor for the main motor control
 
     private CarController carController;
 
@@ -39,77 +28,56 @@ public class CarSteeringView extends View {
     private byte lastLR;
     private byte lastFB;
 
+    private Paint p = new Paint();
+    private Rect rect;
+
     public CarSteeringView(Context context) {
         super(context);
-        init(null, 0);
+        init();
+    }
+
+    public CarSteeringView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public CarSteeringView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init();
     }
 
     public void setCarController(CarController carController) {
         this.carController = carController;
     }
 
-    public CarSteeringView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(attrs, 0);
-    }
+    private void init() {
+        getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                CarSteeringView.this.getViewTreeObserver().removeOnPreDrawListener(this);
 
-    public CarSteeringView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(attrs, defStyle);
-    }
+                touchX = getWidth() / 2f;
+                touchY = getHeight() / 2f;
+                rect = new Rect(0, 0, getWidth(), getHeight());
 
-    private void init(AttributeSet attrs, int defStyle) {
-        // Load attributes
-        final TypedArray a = getContext().obtainStyledAttributes(
-                attrs, R.styleable.CarSteeringView, defStyle, 0);
-
-        mExampleString = a.getString(
-                R.styleable.CarSteeringView_exampleString);
-        mExampleColor = a.getColor(
-                R.styleable.CarSteeringView_exampleColor,
-                mExampleColor);
-        // Use getDimensionPixelSize or getDimensionPixelOffset when dealing with
-        // values that should fall on pixel boundaries.
-        mExampleDimension = a.getDimension(
-                R.styleable.CarSteeringView_exampleDimension,
-                mExampleDimension);
-
-        if (a.hasValue(R.styleable.CarSteeringView_exampleDrawable)) {
-            mExampleDrawable = a.getDrawable(
-                    R.styleable.CarSteeringView_exampleDrawable);
-            mExampleDrawable.setCallback(this);
-        }
-
-        a.recycle();
-
-        // Set up a default TextPaint object
-        mTextPaint = new TextPaint();
-        mTextPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        mTextPaint.setTextAlign(Paint.Align.LEFT);
-
-        // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements();
-    }
-
-    private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(mExampleDimension);
-        mTextPaint.setColor(mExampleColor);
-        mTextWidth = mTextPaint.measureText(mExampleString);
-
-        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-        mTextHeight = fontMetrics.bottom;
+                return true;
+            }
+        });
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        Paint p = new Paint();
+        p.reset();
+
+        // fill background
         p.setStyle(Paint.Style.FILL);
         p.setColor(0xFFC2C2C2);
-        Rect rect = new Rect(0, 0, getWidth(), getHeight());
+
         canvas.drawRect(rect, p);
 
+        // draw square pattern
         p.setColor(0xFFECECEC);
         p.setStyle(Paint.Style.STROKE);
         float dw = getWidth()/10f;
@@ -119,13 +87,11 @@ public class CarSteeringView extends View {
             canvas.drawLine(i*dh, 0f, i*dh, getHeight(), p);
         }
 
+        // draw steering circle
         p.setStrokeWidth(10f);
-        float r = getWidth() / 10f;
+        float r = getWidth() / 7f;
         p.setColor(0xFF00FF00);
-        if(this.isSteering)
-            canvas.drawCircle(this.touchX, this.touchY, r, p);
-        else
-            canvas.drawCircle(this.getWidth()/2f,this.getHeight()/2f, r, p);
+        canvas.drawCircle(this.touchX, this.touchY, r, p);
     }
 
     private void touchStart(float x, float y) {
@@ -144,7 +110,7 @@ public class CarSteeringView extends View {
 
         double dr = Math.sqrt(dx*dx + dy*dy);
 
-        return dr < getWidth() / 20f;
+        return dr < getWidth() / 10f;
     }
 
     private void touchMove(float x, float y) {
@@ -155,17 +121,23 @@ public class CarSteeringView extends View {
         }
     }
 
+    private long lsteer = System.currentTimeMillis();
     private void calcSteering() {
-        float dx = normalizeInput((this.touchX - this.sTouchX) / (getWidth() / 2));
-        float dy = capPower(normalizeInput((this.sTouchY - this.touchY) / (getHeight() / 2)));
+        float dx = normalizeInput((this.touchX - this.sTouchX) / (getWidth() / 2f));
+        float dy = capPower(normalizeInput(MOTOR_BOOST * (this.sTouchY - this.touchY) / (getHeight() / 2f)));
 
-        byte lr = convertToByte(dx); // 128 is straight, > 128 is right, < 128 is left
+        byte lr = convertToByteAngle(dx); // 90 is straight, > 90 is right, < 90 is left
         byte fb = convertToByte(dy); // 128 is no power, > 128 is forward, < 128 is backward
 
-        if(lr != this.lastLR || fb != this.lastFB) {
-            updateSteering(lr, fb);
+        if (lr != this.lastLR || fb != this.lastFB) {
+            long nsteer = System.currentTimeMillis();
+            long diff = nsteer - lsteer;
+            if(diff > 50l) {
+                lsteer = nsteer;
+
+                updateSteering(lr, fb);
+            }
         }
-        Log.i("[BLE]", "steering: lr: " + lr + " fb: " + fb);
     }
 
     private void updateSteering(byte newLR, byte newFB) {
@@ -176,12 +148,12 @@ public class CarSteeringView extends View {
     }
 
     // cap to +/- 1
-    // min value +/- 0.2
     private float normalizeInput(float input) {
         return Math.min(1f, Math.max (-1f, input));
     }
 
     // cut low power (e.g. can't go under 0.5V on 5V power supply)
+    // min value +/- 0.2
     private float capPower(float input) {
         if(input < 0f && input > -MIN_POW)
             return 0f;
@@ -192,8 +164,15 @@ public class CarSteeringView extends View {
         return input;
     }
 
+    private byte convertToByteAngle(float v) {
+        if(Math.abs(v) < 0.1f) // drive straight if almost in the middle
+            v = 0f;
+
+        return (byte)(90 - Math.round(v * 70f)); // 20 to 160 degrees,
+    }
+
     private byte convertToByte(float v) {
-        return (byte)(128 + (int)Math.round(v * 127f));
+        return (byte)(128 + Math.round(v * 127f));
    }
 
     private void touchUp() {
@@ -203,6 +182,28 @@ public class CarSteeringView extends View {
         this.sTouchX = this.touchX;
         this.sTouchY = this.touchY;
         calcSteering();
+        createStopMotorAsyncTask().execute();
+    }
+
+    private AsyncTask<Void, Void, Void> createStopMotorAsyncTask() {
+        return new AsyncTask<Void, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    Thread.sleep(50l);
+                    calcSteering();
+                }catch(InterruptedException ie) { ie.printStackTrace(); }
+                for(int i=0; i<2; i++){
+                    try {
+                        Thread.sleep(100l);
+                    }catch(InterruptedException ie) { ie.printStackTrace(); }
+                    carController.steer(lastLR, lastFB);
+                }
+
+                return null;
+            }
+        };
     }
 
     @Override
@@ -212,26 +213,17 @@ public class CarSteeringView extends View {
 
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN :
-                Log.i("[BLE]", "on touch event action down");
                 touchStart(x, y);
-                invalidate();
                 break;
             case MotionEvent.ACTION_MOVE :
-                Log.i("[BLE]", "on touch event action move");
                 touchMove(x, y);
-                invalidate();
                 break;
             case MotionEvent.ACTION_UP :
-                Log.i("[BLE]", "on touch event action up");
-                touchUp();
-                invalidate();
-                break;
             case MotionEvent.ACTION_CANCEL :
-                Log.i("[BLE]", "on touch event action cancel");
                 touchUp();
-                invalidate();
                 break;
         }
+        invalidate();
 
         return true;
     }
