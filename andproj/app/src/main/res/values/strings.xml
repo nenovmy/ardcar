@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_led">LEDActivity</string>
+    <string name="app_name">BlueCArd</string>
+    <string name="title_activity_ardcon">BlueCArd</string>
+    <string name="connect">Connect</string>
+    <string name="light">Light</string>u7
+    <string name="ble_not_supported">BLE not supported on this device!</string>
+    <string name="connection_lost">Connection lost!</string>
+    <string name="disconnect">Disconnect</string>
 </resources>

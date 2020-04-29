@@ -21,7 +21,7 @@ void initBluetooth() {
   sendCommand("AT+ROLE0");
   sendCommand("AT+UUIDFFE0");
   sendCommand("AT+CHARFFE1");
-  sendCommand("AT+NAMEBlueCarArd");
+  sendCommand("AT+NAMEBlueCArd");
 }
 
 void sendCommand(const char * command) {
