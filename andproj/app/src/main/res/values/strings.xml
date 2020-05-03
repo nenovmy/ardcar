@@ -2,7 +2,7 @@
     <string name="app_name">BlueCArd</string>
     <string name="title_activity_ardcon">BlueCArd</string>
     <string name="connect">Connect</string>
-    <string name="light">Light</string>u7
+    <string name="light">Light</string>
     <string name="ble_not_supported">BLE not supported on this device!</string>
     <string name="connection_lost">Connection lost!</string>
     <string name="disconnect">Disconnect</string>
