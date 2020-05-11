@@ -3,8 +3,8 @@
 const int SWITCH_LED = 0x0;
 const int STEER = 0x1;
 
-const int lights = 12;  //initializing pin 12 as car lights
-const int servoPin = 9; // steering
+const int lights = 9;  //initializing pin 12 as car lights
+const int servoPin = 12; // steering
 
 const int L9110_IA = 5; // Pin D10 --> Motor Input A
 const int L9110_IB = 6; // Pin D11 --> Motor Input B
