@@ -1,10 +1,11 @@
 #include "Servo.h"
 
-const int SWITCH_LED = 0x0;
-const int STEER = 0x1;
+const int HEARTBEAT  = 0x0;
+const int STEER      = 0x1;
+const int SWITCH_LED = 0x2;
 
-const int lights = 9;  //initializing pin 12 as car lights
-const int servoPin = 12; // steering
+const int lightsPin = 9;  // initializing pin 12 as car lights
+const int servoPin  = 12; // steering
 
 const int L9110_IA = 5; // Pin D10 --> Motor Input A
 const int L9110_IB = 6; // Pin D11 --> Motor Input B
@@ -17,7 +18,7 @@ Servo servo;
 
 
 void initController() {
-  pinMode(lights, OUTPUT);
+  pinMode(lightsPin, OUTPUT);
   pinMode( motorDir, OUTPUT );
   pinMode( motorPWM, OUTPUT );
   servo.attach(servoPin); 
@@ -26,6 +27,7 @@ void initController() {
 
 void executeCommand(int cmd[]) {
   switch(cmd[0]) {
+    case HEARTBEAT: heartbeat(); break;
     case SWITCH_LED: switchLight(cmd[1]); break;
     case STEER: carControl(cmd[1], cmd[2]); break;
   }
@@ -76,7 +78,7 @@ void moveBackwards(int fb) {
 }
 
 void switchLED(int value) {
-    analogWrite(lights, value);
+    analogWrite(lightsPin, value);
 }
 
 void shutDown() {

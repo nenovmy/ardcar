@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +31,9 @@ public class CarSteeringView extends View {
 
     private Paint p = new Paint();
     private Rect rect;
+
+    private boolean isAlive = false;
+    private Thread heartBeatThread = null;
 
     public CarSteeringView(Context context) {
         super(context);
@@ -63,6 +67,35 @@ public class CarSteeringView extends View {
                 return true;
             }
         });
+    }
+
+    public void start() {
+        this.isAlive = true;
+        this.heartBeatThread = createHeartBeatThread();
+        this.heartBeatThread.start();
+    }
+
+    public void stop() {
+        this.isAlive = false;
+        this.heartBeatThread.interrupt();
+    }
+
+    private Thread createHeartBeatThread() {
+        return new Thread() {
+            @Override
+            public void run() {
+                while(CarSteeringView.this.isAlive) {
+                    heartBeat();
+                    try {
+                        Thread.sleep(1000l);
+                    }catch(InterruptedException ie) { return; }
+                }
+            }
+        };
+    }
+
+    private void heartBeat() {
+        this.carController.heartbeat();
     }
 
     @Override

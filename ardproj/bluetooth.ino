@@ -3,17 +3,14 @@
 #include "HardwareSerial.h"
 
 SoftwareSerial mySerial(2, 3); // TX, RX
-
-const int blstat = 4;
-
 int buff[10];
 int currCh = 0;
 bool isConnected = false;
 
 long connChecktime = millis();
+long heartbeatTime = 0l;
 
 void initBluetooth() {
-  pinMode(blstat, INPUT);
   mySerial.begin(9600);
   Serial.begin(9600);
 
@@ -53,13 +50,17 @@ void updateSerial() {
     mySerial.write(Serial.read());
 }
 
+void heartbeat() {
+  heartbeatTime = millis();
+}
+
 void checkConnected() {
   long diff = millis() - connChecktime;
-  if(diff < 300)
+  if(diff < 100)
     return;
   connChecktime = millis();
 
-  bool stat = digitalRead(blstat);
+  bool stat = (connChecktime - heartbeatTime) < 2000;
 
   if(stat) {
     if(!isConnected) {

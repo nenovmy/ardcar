@@ -20,6 +20,7 @@ public class CarRCActivity extends AppCompatActivity implements BLEControllerLis
     private boolean isMovingAway = false;
 
     private CarController carController;
+    private CarSteeringView carSteeringView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +28,8 @@ public class CarRCActivity extends AppCompatActivity implements BLEControllerLis
         setContentView(R.layout.activity_car_r_c);
         this.bleController = BLEController.getInstance();
         this.carController = new CarController((this.bleController));
-        CarSteeringView csv = findViewById(R.id.carSteering);
-        csv.setCarController(this.carController);
+        this.carSteeringView = findViewById(R.id.carSteering);
+        this.carSteeringView.setCarController(this.carController);
         initUI();
     }
 
@@ -66,6 +67,7 @@ public class CarRCActivity extends AppCompatActivity implements BLEControllerLis
 
         this.bleController.addBLEControllerListener(this);
         this.isMovingAway = false;
+        this.carSteeringView.start();
     }
 
     @Override
@@ -75,6 +77,7 @@ public class CarRCActivity extends AppCompatActivity implements BLEControllerLis
         this.isMovingAway = true;
         this.bleController.disconnect();
         this.bleController.removeBLEControllerListener(this);
+        this.carSteeringView.stop();
     }
 
     private void log(String text) {
