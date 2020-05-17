@@ -1,14 +1,14 @@
 package com.nenoff.bluecard;
 
 public class CarController {
-    private static byte HEARTBEAT = 0x0;
-    private static byte STEER = 0x1;
-    private static byte LED_COMMAND = 0x2;
+    private final static byte HEARTBEAT = 0x0;
+    private final static byte STEER = 0x1;
+    private final static byte LED_COMMAND = 0x2;
 
-    private static byte VALUE_OFF = 0x0;
-    private static byte VALUE_ON = (byte)0xFF;
+    private final static byte VALUE_OFF = 0x0;
+    private final static byte VALUE_ON = (byte)0xFF;
 
-    private static byte END = 0x0A;
+    private final static byte END = 0x0A;
 
     private BLEController bleController;
 
