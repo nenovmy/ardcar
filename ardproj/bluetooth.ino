@@ -6,10 +6,9 @@ const int START_COMMAND = 0x1;
 
 SoftwareSerial mySerial(2, 3); // TX, RX
 int buff[10];
-int currCh = 0;
+int currPos = 0;
 bool isConnected = false;
 
-long connChecktime = millis();
 long heartbeatTime = 0l;
 
 void initBluetooth() {
@@ -77,20 +76,20 @@ void readCommand() {
 
   while (mySerial.available()) {
     int nc = mySerial.read();
-    if (currCh > 0 || nc == START_COMMAND)
+    if (currPos > 0 || nc == START_COMMAND)
       parseNext(nc);
   }
 }
 
 void parseNext(int next) {
-  buff[currCh++] = next;
+  buff[currPos++] = next;
   if (isCommandFullyRead()) {
     executeCommand(buff);
-    currCh = 0;
+    currPos = 0;
   }
 }
 
 bool isCommandFullyRead() {
-  return currCh > 2             && // command is at leas 3 bytes long (START, Command type, num of parameters)
-         buff[2] == currCh - 3;    // are all parameters already read
+  return currPos > 2             && // command header is 3 bytes (START, Command type, num of parameters)
+         buff[2] == currPos - 3;    // are all parameters already read
 }
