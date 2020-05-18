@@ -1,6 +1,4 @@
-#include "Arduino.h"
 #include "SoftwareSerial.h"
-#include "HardwareSerial.h"
 
 const int START_COMMAND = 0x1;
 
