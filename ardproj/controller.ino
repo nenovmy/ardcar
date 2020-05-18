@@ -1,8 +1,8 @@
 #include "Servo.h"
 
-const int HEARTBEAT  = 0x0;
-const int STEER      = 0x1;
-const int SWITCH_LED = 0x2;
+const int HEARTBEAT  = 0x2;
+const int STEER      = 0x3;
+const int SWITCH_LED = 0x4;
 
 const int lightsPin = 9;  // initializing pin 12 as car lights
 const int servoPin  = 12; // steering
@@ -26,10 +26,10 @@ void initController() {
 }
 
 void executeCommand(int cmd[]) {
-  switch(cmd[0]) {
+  switch(cmd[1]) {
     case HEARTBEAT: heartbeat(); break;
-    case SWITCH_LED: switchLight(cmd[1]); break;
-    case STEER: carControl(cmd[1], cmd[2]); break;
+    case SWITCH_LED: switchLight(cmd[3]); break;
+    case STEER: carControl(cmd[3], cmd[4]); break;
   }
 }
 
