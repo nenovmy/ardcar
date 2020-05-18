@@ -16,12 +16,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 import static android.bluetooth.BluetoothProfile.GATT;
 
 public class BLEController{
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
     private static BLEController instance;
 

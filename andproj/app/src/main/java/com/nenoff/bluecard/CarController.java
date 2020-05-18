@@ -1,3 +1,11 @@
+/*
+ * (c) Matey Nenov (https://www.thinker-talk.com)
+ *
+ * Licensed under Creative Commons: By Attribution 3.0
+ * http://creativecommons.org/licenses/by/3.0/
+ *
+ */
+
 package com.nenoff.bluecard;
 
 public class CarController {
@@ -8,8 +16,6 @@ public class CarController {
 
     private final static byte VALUE_OFF = 0x0;
     private final static byte VALUE_ON = (byte)0xFF;
-
-//    private final static byte END = 0x0A;
 
     private BLEController bleController;
 
