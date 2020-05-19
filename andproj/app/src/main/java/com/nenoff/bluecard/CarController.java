@@ -23,7 +23,7 @@ public class CarController {
         this.bleController = bleController;
     }
 
-    private byte [] createControllWord(byte type, byte ... args) {
+    private byte [] createControlWord(byte type, byte ... args) {
         byte [] command = new byte[args.length + 3];
         command[0] = START;
         command[1] = type;
@@ -35,14 +35,14 @@ public class CarController {
     }
 
     public void switchLED(boolean on) {
-        this.bleController.sendData(createControllWord(LED_COMMAND, on?VALUE_ON:VALUE_OFF));
+        this.bleController.sendData(createControlWord(LED_COMMAND, on?VALUE_ON:VALUE_OFF));
     }
 
     public void steer(byte lr, byte fb) {
-        this.bleController.sendData(createControllWord(STEER, lr, fb));
+        this.bleController.sendData(createControlWord(STEER, lr, fb));
     }
 
     public void heartbeat() {
-        this.bleController.sendData(createControllWord(HEARTBEAT));
+        this.bleController.sendData(createControlWord(HEARTBEAT));
     }
 }
