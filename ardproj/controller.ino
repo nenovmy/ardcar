@@ -12,7 +12,7 @@ const int HEARTBEAT  = 0x2;
 const int STEER      = 0x3;
 const int SWITCH_LED = 0x4;
 
-const int lightsPin = 9;  // initializing pin 12 as car lights
+const int lightsPin = 9;  // initializing pin 9 as car lights
 const int servoPin  = 12; // steering
 
 const int L9110_IA = 5; // Pin D10 --> Motor Input A
